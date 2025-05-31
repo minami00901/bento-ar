@@ -1,241 +1,167 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>お弁当アンケート AR体験</title>
-<style>
-  /* 全体背景 */
-  body {
-    margin: 0;
-    background-image: url('https://raw.githubusercontent.com/minami00901/bento-ar/main/%E3%83%86%E3%82%B9%E3%83%88.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    font-family: sans-serif;
-    overflow-x: hidden;
-    color: #333;
-  }
-
-  /* 質問部分のスタイル */
-  .question-box {
-    background-color: rgba(135, 206, 250, 0.8); /* 水色半透明 */
-    border-radius: 1rem;
-    padding: 2rem;
-    margin: 2rem auto;
-    width: 90%;
-    max-width: 500px;
-    box-shadow: 0 0 15px rgba(0,0,0,0.2);
-    text-align: center;
-  }
-
-  /* 選択肢ボタン */
-  .options button {
-    margin: 1rem;
-    padding: 1rem 2rem;
-    font-size: 1rem;
-    border-radius: 1rem;
-    background: #ffd700;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  .options button:hover {
-    background-color: #ffec5c;
-  }
-
-  /* ありがとう画面のコンテナ */
-  #thanksImage {
-    position: relative;
-    width: 100vw;
-    height: 80vh;
-    margin: 0 auto;
-    overflow: visible;
-    display: none;
-  }
-
-  /* ありがとう画像 */
-  #thanksImg {
-    position: absolute;
-    width: 200px;
-    height: 200px;
-    object-fit: contain;
-    cursor: default;
-    user-select: none;
-    will-change: transform;
-  }
-
-  /* 「ありがとう」テキスト */
-  #thanksText {
-    position: absolute;
-    width: 100%;
-    top: 75%;
-    left: 0;
-    text-align: center;
-    font-size: 2rem;
-    font-weight: bold;
-    color: #ff4500;
-    text-shadow:
-       0 0 5px #ff4500,
-       0 0 10px #ffa07a,
-       0 0 20px #ffa07a,
-       0 0 40px #ff6347;
-    pointer-events: none;
-  }
-
-  /* クラッカーエフェクト */
-  .confetti-piece {
-    position: absolute;
-    width: 8px;
-    height: 16px;
-    background-color: #ffd700;
-    opacity: 0.9;
-    border-radius: 3px;
-    animation: confetti-fall 1.5s forwards;
-  }
-
-  @keyframes confetti-fall {
-    0% {
-      opacity: 1;
-      transform: translateY(0) rotate(0deg);
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>お弁当アンケート</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      background: url('https://raw.githubusercontent.com/minami00901/bento-ar/main/%E3%83%86%E3%82%B9%E3%83%88.jpg') no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      padding: 2rem;
     }
-    100% {
-      opacity: 0;
-      transform: translateY(100vh) rotate(360deg);
+
+    .question-box {
+      margin-top: 2rem;
+      padding: 1rem;
+      border-radius: 1rem;
+      background: #b3e5fc;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
     }
-  }
-</style>
-</head>
-<body>
 
-  <div class="question-box" id="questionBox">
-    <h1>今日のお弁当はいかがでしたか？</h1>
-    <button onclick="showRandomQuestion()">ひとくちアンケートにご協力をお願いします</button>
-  </div>
-
-  <div class="question-box" id="questionArea" style="display:none;"></div>
-
-  <div id="thanksImage">
-    <img id="thanksImg" src="" alt="ありがとう画像" />
-    <div id="thanksText">おいしいとデジタルでつながれ！^^ｂ</div>
-  </div>
-
-<script>
-  const questions = [
-    {
-      text: "今日のお弁当はいかがでしたか？",
-      options: [
-        "① とても美味しかった",
-        "② 普通（空腹は満たされました）",
-        "③ ちょっと惜しい（あと一歩）"
-      ]
-    },
-    {
-      text: "またこのお弁当を食べたいですか？",
-      options: [
-        "① ぜひもう一度食べたいです！",
-        "② 内容によっては",
-        "③ 今日はごちそうさまでした…"
-      ]
-    },
-    {
-      text: "このお弁当、どんな人に勧めたいですか？",
-      options: [
-        "① 午後イチ会議で眠そうなあの人へ",
-        "② これから発表！どきどきしているあの人へ",
-        "③ 自分（また食べたい）"
-      ]
+    .options button {
+      display: block;
+      margin: 0.5rem auto;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      background: #ffd700;
+      border: none;
+      border-radius: 1rem;
+      cursor: pointer;
     }
-  ];
 
-  const thanksImages = [
-    "https://raw.githubusercontent.com/minami00901/bento-ar/main/%E3%81%8A%E3%81%84%E3%81%97%E3%81%84%E3%81%A8%E3%83%87%E3%82%B8%E3%82%BF%E3%83%AB%E3%81%A7%E7%B9%8B%E3%81%8C%E3%82%8C%EF%BC%81.png"
-  ];
+    .thanks-container {
+      margin-top: 2rem;
+      position: relative;
+      height: 300px;
+    }
 
-  const questionBox = document.getElementById("questionBox");
-  const questionArea = document.getElementById("questionArea");
-  const thanksImageDiv = document.getElementById("thanksImage");
-  const thanksImg = document.getElementById("thanksImg");
-  const thanksText = document.getElementById("thanksText");
+    .thanks-img {
+      width: 300px;
+      position: absolute;
+      animation: moveRandom 2s ease-in-out forwards;
+    }
 
-  function showRandomQuestion() {
-    const q = questions[Math.floor(Math.random() * questions.length)];
-    questionBox.style.display = "none";
-    questionArea.style.display = "block";
-    questionArea.innerHTML = `<h2>${q.text}</h2><div class="options">${q.options.map((opt, i) =>
-      `<button onclick="showThanks()">${opt}</button>`).join("")}</div>`;
-  }
-
-  function showThanks() {
-    questionArea.style.display = "none";
-    thanksImageDiv.style.display = "block";
-
-    thanksImg.src = thanksImages[0];
-
-    const startX = Math.random() * (window.innerWidth - 200);
-    const startY = Math.random() * (window.innerHeight - 200);
-
-    const centerX = (window.innerWidth - 200) / 2;
-    const centerY = (window.innerHeight - 200) / 2;
-
-    thanksImg.style.transform = `translate(${startX}px, ${startY}px)`;
-    thanksText.style.opacity = 0;
-
-    createConfetti();
-
-    let startTime = null;
-    function animate(time) {
-      if (!startTime) startTime = time;
-      const elapsed = time - startTime;
-      const duration = 2000;
-
-      if (elapsed < duration) {
-        const progress = elapsed / duration;
-        const currentX = startX + (centerX - startX) * progress;
-        const currentY = startY + (centerY - startY) * progress;
-        thanksImg.style.transform = `translate(${currentX}px, ${currentY}px)`;
-        requestAnimationFrame(animate);
-      } else {
-        thanksImg.style.transform = `translate(${centerX}px, ${centerY}px)`;
-        fadeInThanksText();
+    @keyframes moveRandom {
+      0% {
+        top: 0;
+        left: 0;
+        transform: rotate(0deg);
+      }
+      100% {
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotate(360deg);
       }
     }
-    requestAnimationFrame(animate);
-  }
 
-  function fadeInThanksText() {
-    thanksText.style.opacity = 0;
-    thanksText.style.transition = "opacity 2s ease-in-out";
-    setTimeout(() => {
-      thanksText.style.opacity = 1;
-    }, 100);
-  }
-
-  function createConfetti() {
-    const confettiCount = 30;
-
-    for(let i = 0; i < confettiCount; i++) {
-      const confetti = document.createElement('div');
-      confetti.classList.add('confetti-piece');
-      confetti.style.left = Math.random() * window.innerWidth + 'px';
-      confetti.style.top = (-20 - Math.random() * 100) + 'px';
-      confetti.style.backgroundColor = randomColor();
-      confetti.style.animationDelay = (Math.random() * 1.5) + 's';
-      confetti.style.transform = `rotate(${Math.random()*360}deg)`;
-
-      document.body.appendChild(confetti);
-
-      confetti.addEventListener('animationend', () => {
-        confetti.remove();
-      });
+    .sparkle {
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      top: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: url('https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif') no-repeat center center;
+      background-size: contain;
+      pointer-events: none;
     }
-  }
 
-  function randomColor() {
-    const colors = ['#ffd700', '#ffa500', '#ff4500', '#ffff00', '#ff69b4', '#00ffff'];
-    return colors[Math.floor(Math.random() * colors.length)];
-  }
-</script>
+    .final-message, .connect-message {
+      display: none;
+      font-size: 1.5rem;
+      color: #333;
+      margin-top: 1rem;
+      animation: fadeInUp 1s ease forwards;
+    }
 
+    @keyframes fadeInUp {
+      0% {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>お疲れ様です</h1>
+  <button onclick="showRandomQuestion()">ひとくちアンケートにご協力をお願いします</button>
+
+  <div class="question-box" id="questionBox" style="display:none;"></div>
+
+  <div class="thanks-container" id="thanksContainer" style="display:none;">
+    <img id="thanksImg" class="thanks-img" src="" alt="ありがとう画像" />
+    <div class="sparkle" id="sparkle" style="display:none;"></div>
+    <div class="connect-message" id="connectMessage">「おいしい」とデジタルでつながれ！^^</div>
+    <div class="final-message" id="finalMessage">ありがとうございます！後半戦もがんばってｂ</div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        text: "今日のお弁当はいかがですか？",
+        options: ["① とても美味しそう", "② 普通（空腹は満たされそう）", "③ ちょっと惜しい（あと一歩）"]
+      },
+      {
+        text: "またこのお弁当を食べたいですか？",
+        options: ["① ぜひもう一度食べたいです！", "② 内容によっては", "③ 今日はごちそうさまでした…"]
+      },
+      {
+        text: "このお弁当、どんな人に勧めたいですか？",
+        options: ["① 午後イチ会議で眠そうなあの人へ", "② これから発表！どきどきしているあの人へ", "③ 自分（また食べたい）"]
+      }
+    ];
+
+    const imageUrl = "https://raw.githubusercontent.com/minami00901/bento-ar/main/%E3%81%8A%E3%81%84%E3%81%97%E3%81%84%E3%81%A8%E3%83%87%E3%82%B8%E3%82%BF%E3%83%AB%E3%81%A7%E7%B9%8B%E3%81%8C%E3%82%8C%EF%BC%81.png";
+
+    function showRandomQuestion() {
+      const q = questions[Math.floor(Math.random() * questions.length)];
+      const box = document.getElementById("questionBox");
+      box.innerHTML = `<h2>${q.text}</h2><div class="options">${q.options.map(opt => `<button onclick="showThanks()">${opt}</button>`).join("")}</div>`;
+      box.style.display = "block";
+      document.getElementById("thanksContainer").style.display = "none";
+      document.getElementById("connectMessage").style.display = "none";
+      document.getElementById("finalMessage").style.display = "none";
+    }
+
+    function showThanks() {
+      const imgTag = document.getElementById("thanksImg");
+      const container = document.getElementById("thanksContainer");
+      const sparkle = document.getElementById("sparkle");
+
+      imgTag.src = imageUrl;
+      container.style.display = "block";
+
+      // リスタート用に class を削除・再追加
+      imgTag.classList.remove("thanks-img");
+      void imgTag.offsetWidth; // reflow
+      imgTag.classList.add("thanks-img");
+
+      // キラキラを表示
+      setTimeout(() => {
+        sparkle.style.display = "block";
+      }, 2000);
+
+      // 「おいしいとデジタルでつながれ！」を表示
+      setTimeout(() => {
+        document.getElementById("connectMessage").style.display = "block";
+      }, 2500);
+
+      // 最後のメッセージ
+      setTimeout(() => {
+        document.getElementById("finalMessage").style.display = "block";
+      }, 4000);
+    }
+  </script>
 </body>
 </html>
