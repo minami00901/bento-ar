@@ -138,6 +138,23 @@
       const imgTag = document.getElementById("thanksImg");
       const container = document.getElementById("thanksContainer");
       const sparkle = document.getElementById("sparkle");
+      // 「おいしいとデジタルでつながれ！」の表示後に追加コメントを表示
+ setTimeout(() => {
+ 　　 const finalMessage = document.createElement("div");
+ 　 finalMessage.innerText = "ありがとうございます！後半戦もがんばって";
+　  finalMessage.style.fontSize = "1.5em";
+    finalMessage.style.fontWeight = "bold";
+    finalMessage.style.textAlign = "center";
+    finalMessage.style.marginTop = "20px";
+    finalMessage.style.opacity = "0";
+    finalMessage.style.transition = "opacity 1s ease-in-out";
+    document.getElementById("thanksImage").appendChild(finalMessage);
+
+  // フェードイン
+  setTimeout(() => {
+    finalMessage.style.opacity = "1";
+  }, 100);
+}, 4000); // ←「おいしいとデジタルでつながれ！」の後に4秒くらいの余裕
 
       imgTag.src = imageUrl;
       container.style.display = "block";
