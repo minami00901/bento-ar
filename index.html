@@ -7,92 +7,68 @@
   <style>
     body {
       font-family: sans-serif;
+      margin: 0;
+      background: #ffffff;
+      overflow: hidden;
       text-align: center;
-      padding: 2rem;
-      background: #fff0f5;
     }
     .question-box {
-      margin-top: 2rem;
-      padding: 1rem;
-      border-radius: 1rem;
-      background: #fff;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      padding: 2rem;
     }
     .options button {
-      display: block;
-      margin: 0.5rem auto;
-      padding: 0.5rem 1rem;
+      margin: 1rem;
+      padding: 1rem 2rem;
       font-size: 1rem;
+      border-radius: 1rem;
       background: #ffd700;
       border: none;
-      border-radius: 1rem;
       cursor: pointer;
-      max-width: 320px;
-      white-space: normal;
     }
-    .thanks-image {
-      margin-top: 2rem;
-      position: relative;
+    #resultScreen {
       display: none;
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      background: #fff;
+      overflow: hidden;
+    }
+    #movingImage {
       width: 300px;
-      height: 300px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    .thanks-image img {
-      max-width: 100%;
-      max-height: 100%;
-      border-radius: 1rem;
-    }
-    .thanks-text {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      font-size: 2.5rem;
-      font-weight: bold;
-      color: #ff1493;
-      text-shadow:
-         0 0 5px #ff69b4,
-         0 0 10px #ff69b4,
-         0 0 20px #ff69b4,
-         0 0 40px #ff1493,
-         0 0 80px #ff1493;
-      animation: sparkleText 1.5s ease-in-out infinite alternate;
-      pointer-events: none;
-      user-select: none;
+      opacity: 0;
+      transition: transform 2s ease-in-out, opacity 1s;
     }
-    @keyframes sparkleText {
-      0% {
-        text-shadow:
-          0 0 5px #ff69b4,
-          0 0 10px #ff69b4,
-          0 0 20px #ff69b4,
-          0 0 40px #ff1493,
-          0 0 80px #ff1493;
-        color: #ff1493;
-      }
-      100% {
-        text-shadow:
-          0 0 10px #ff1493,
-          0 0 20px #ff1493,
-          0 0 40px #ff69b4,
-          0 0 80px #ff69b4,
-          0 0 160px #ff69b4;
-        color: #ff69b4;
-      }
+    #message {
+      position: absolute;
+      top: 70%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.5rem;
+      font-weight: bold;
+      opacity: 0;
+      color: #e91e63;
+      animation: sparkle 1s ease-in-out infinite alternate;
+    }
+    @keyframes sparkle {
+      0% { filter: brightness(1); }
+      100% { filter: brightness(1.8); }
     }
   </style>
 </head>
 <body>
-  <h1>今日のお弁当はいかがでしたか？</h1>
-  <button onclick="showRandomQuestion()">質問を表示</button>
+  <div class="question-box" id="questionBox">
+    <h1>今日のお弁当はいかがでしたか？</h1>
+    <button onclick="showQuestion()">質問を表示</button>
+  </div>
 
-  <div class="question-box" id="questionBox" style="display:none;"></div>
+  <div class="question-box" id="questionArea" style="display:none;"></div>
 
-  <div class="thanks-image" id="thanksImage">
-    <img id="thanksImg" src="" alt="ありがとう画像" />
-    <div class="thanks-text">ありがとう</div>
+  <div id="resultScreen">
+    <img id="movingImage" src="https://raw.githubusercontent.com/minami00901/bento-ar/main/%E3%81%8A%E3%81%84%E3%81%97%E3%81%84%E3%81%A8%E3%83%87%E3%82%B8%E3%82%BF%E3%83%AB%E3%81%A7%E7%B9%8B%E3%81%8C%E3%82%8C%EF%BC%81.png" alt="ありがとう画像">
+    <div id="message">おいしいとデジタルでつながる！</div>
   </div>
 
   <script>
@@ -100,53 +76,41 @@
       {
         text: "今日のお弁当はいかがでしたか？",
         options: [
-          "①  とても美味しかった（心の中で拍手しました）",
+          "① とても美味しかった（心の中で拍手しました）",
           "② 普通（空腹は満たされました）",
           "③ ちょっと惜しい（あと一歩の伸びしろ）"
-        ]
-      },
-      {
-        text: "またこのお弁当を食べたいですか？",
-        options: [
-          "① ぜひもう一度食べたいです！",
-          "② 内容によっては",
-          "③ 今日はごちそうさまでした…"
-        ]
-      },
-      {
-        text: "このお弁当、どんな人に勧めたいですか？",
-        options: [
-          "①午後イチ会議で眠そうなあの人",
-          "②アイデアが枯渇している商品開発部員",
-          "③自分（また食べたい）"
         ]
       }
     ];
 
-    // アップロード済みの画像ファイル名をここにセットしてください
-    const thanksImages = [
-  "https://raw.githubusercontent.com/minami00901/bento-ar/main/58104.jpg",
-  "https://raw.githubusercontent.com/minami00901/bento-ar/main/88670.jpg",
-  "https://raw.githubusercontent.com/minami00901/bento-ar/main/IMG_4402%20(1).JPG"
-];
-
-    function showRandomQuestion() {
-      const q = questions[Math.floor(Math.random() * questions.length)];
-      const box = document.getElementById("questionBox");
-      box.innerHTML = `<h2>${q.text}</h2><div class="options">${q.options.map(opt => `<button onclick="showThanks()">${opt}</button>`).join("")}</div>`;
-      box.style.display = "block";
-      document.getElementById("thanksImage").style.display = "none";
+    function showQuestion() {
+      const q = questions[0];
+      const area = document.getElementById("questionArea");
+      area.innerHTML = `<h2>${q.text}</h2><div class="options">${q.options.map(opt => `<button onclick="showResult()">${opt}</button>`).join("")}</div>`;
+      area.style.display = "block";
+      document.getElementById("questionBox").style.display = "none";
     }
 
-    function showThanks() {
-      const imgTag = document.getElementById("thanksImg");
-      const thanksDiv = document.getElementById("thanksImage");
+    function showResult() {
+      document.getElementById("questionArea").style.display = "none";
+      const resultScreen = document.getElementById("resultScreen");
+      const image = document.getElementById("movingImage");
+      const message = document.getElementById("message");
 
-      // ランダムに画像を選ぶ
-      const randomImg = thanksImages[Math.floor(Math.random() * thanksImages.length)];
-      imgTag.src = randomImg;
+      resultScreen.style.display = "block";
 
-      thanksDiv.style.display = "block";
+      // ランダムな方向に移動
+      const x = (Math.random() - 0.5) * 400;
+      const y = (Math.random() - 0.5) * 400;
+      image.style.transform = `translate(${x}px, ${y}px)`;
+      image.style.opacity = 1;
+
+      setTimeout(() => {
+        image.style.transform = "translate(-50%, -50%)";
+        setTimeout(() => {
+          message.style.opacity = 1;
+        }, 1000);
+      }, 2000);
     }
   </script>
 </body>
