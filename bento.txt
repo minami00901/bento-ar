@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>お弁当アンケート</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      background: #fffdf5;
+      padding: 20px;
+    }
+    h2 {
+      color: #333;
+      margin-bottom: 30px;
+    }
+    button {
+      display: block;
+      margin: 10px auto;
+      padding: 12px 20px;
+      font-size: 1.1rem;
+      border: none;
+      border-radius: 8px;
+      background-color: #ffcc70;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    button:hover {
+      background-color: #ffaa33;
+    }
+    #thanksArea {
+      margin-top: 30px;
+    }
+    img {
+      width: 80%;
+      max-width: 300px;
+      animation: sparkle 1s ease-in-out;
+    }
+    @keyframes sparkle {
+      0% { transform: scale(0.5); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <h2>今日のお弁当はいかがでしたか？</h2>
+  <button onclick="showThanks(0)">① おいしかった！</button>
+  <button onclick="showThanks(1)">② まあまあ</button>
+  <button onclick="showThanks(2)">③ うーん…</button>
+
+  <div id="thanksArea"></div>
+
+  <script>
+    const thanksImages = [
+      "thanks1.png",
+      "thanks2.png",
+      "thanks3.png"
+    ];
+
+    function showThanks(choice) {
+      const random = Math.floor(Math.random() * thanksImages.length);
+      const img = `<img src="${thanksImages[random]}" alt="ありがとう画像">`;
+      document.getElementById("thanksArea").innerHTML = `
+        <p>ご回答ありがとうございます！</p>${img}
+      `;
+    }
+  </script>
+
+</body>
+</html>
