@@ -19,7 +19,7 @@
     }
 
     #questionBox {
-      background: rgba(166, 208, 247, 0.8); /* 半透明の水色 */
+      background: rgba(166, 208, 247, 0.8);
       padding: 1.5rem;
       border-radius: 1rem;
       box-shadow: 0 0 15px rgba(0,0,0,0.2);
@@ -34,27 +34,20 @@
       font-size: 1rem;
       border-radius: 1rem;
       border: none;
+      background: #ffd700;
       cursor: pointer;
     }
 
-    /* 通常の選択肢ボタン */
-    #options button {
-      background: #ffd700;
-    }
-
-    /* アンケート開始ボタン（薄紫） */
     #showQuestionBtn {
-      background: #e0ccff;
+      background-color: #d8b4f8; /* 薄い紫 */
       color: #333;
-      font-weight: bold;
-      border: 2px solid #d3bfff;
     }
 
     #thanksImage {
       position: relative;
       margin: 0 auto;
-      width: 600px;  /* 拡大 */
-      height: 600px; /* 拡大 */
+      width: 600px;
+      height: 600px;
       display: none;
     }
 
@@ -82,8 +75,8 @@
       opacity: 0;
       transform: translateY(20px);
       transition: opacity 1s ease, transform 1s ease;
-      color: red;
       font-weight: bold;
+      color: red;
     }
 
     #thanksMessage.show, #finalMessage.show {
@@ -102,7 +95,10 @@
   <button id="showQuestionBtn">ひとくちアンケートにご協力をおねがいします</button>
 
   <div id="thanksImage">
-    <img id="thanksImg" src="https://raw.githubusercontent.com/minami00901/bento-ar/main/%E3%81%8A%E3%81%84%E3%81%97%E3%81%84%E3%81%A8%E3%83%87%E3%82%B8%E3%82%BF%E3%83%AB%E3%81%A7%E7%B9%8B%E3%81%8C%E3%82%8C%EF%BC%81.png" alt="ありがとう画像" />
+    <img
+      id="thanksImg"
+      src="https://raw.githubusercontent.com/minami00901/bento-ar/main/%E9%80%8F%E9%81%8E%E3%81%8A%E3%81%84%E3%81%97%E3%81%84%E3%81%A8%E3%83%87%E3%82%B8%E3%82%BF%E3%83%AB%E3%81%A7%E7%B9%8B%E3%81%8C%E3%82%8C_-removebg-preview.png"
+      alt="ありがとう画像" />
     <div id="thanksMessage">「おいしい」とデジタルでつながれ！^^</div>
   </div>
 
@@ -112,11 +108,11 @@
     const questions = [
       {
         text: "今日のお弁当はいかがですか？",
-        options: ["① とても美味しそう", "② 普通（空腹は満たされました）", "③ ちょっと惜しい（あと一歩）"]
+        options: ["① とても美味しかった", "② 普通（空腹は満たされました）", "③ ちょっと惜しい（あと一歩）"]
       },
       {
-        text: "またこのお弁当を食べたいですか？",
-        options: ["① ぜひもう一度食べたいです！", "② 内容によっては", "③ 今日はごちそうさまでした…"]
+        text: "お腹いっぱいになりましたか？",
+        options: ["① 満腹です！はち切れます", "② 丁度よいです。おいしく食べられました！", "③ まだもう１P食べられます…"]
       },
       {
         text: "このお弁当、どんな人に勧めたいですか？",
@@ -202,6 +198,7 @@
         setTimeout(() => {
           finalMessage.classList.add("show");
 
+          // 🎉 クラッカー風演出
           confetti({
             particleCount: 120,
             spread: 100,
