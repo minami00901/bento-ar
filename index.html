@@ -19,7 +19,7 @@
     }
 
     #questionBox {
-      background: rgba(166, 208, 247, 0.8); /* 半透明の水色 */
+      background: rgba(166, 208, 247, 0.8);
       padding: 1.5rem;
       border-radius: 1rem;
       box-shadow: 0 0 15px rgba(0,0,0,0.2);
@@ -41,18 +41,20 @@
     #thanksImage {
       position: relative;
       margin: 0 auto;
-      width: 300px;
-      height: 300px;
+      width: 900px; /* ★画像サイズ拡大 */
+      height: 900px;
       display: none;
     }
 
     #thanksImg {
       max-width: 100%;
+      max-height: 100%;
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       animation: none;
+      background: transparent; /* ★背景を明示的に透明に */
     }
 
     @keyframes sparkle {
