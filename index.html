@@ -4,40 +4,48 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>お弁当アンケートAR</title>
+
+  <!-- クラッカーライブラリ -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
   <style>
     body {
-      background: #fff;
+      margin: 0;
       font-family: sans-serif;
       text-align: center;
+      background: url('https://raw.githubusercontent.com/minami00901/bento-ar/main/%E3%83%86%E3%82%B9%E3%83%88.jpg') no-repeat center center fixed;
+      background-size: cover;
       padding: 2rem;
     }
+
     #questionBox {
-      background: url("https://raw.githubusercontent.com/minami00901/bento-ar/main/%E3%83%86%E3%82%B9%E3%83%88.jpg") no-repeat center center;
-      background-size: cover;
-      padding: 1rem;
+      background: rgba(166, 208, 247, 0.8); /* 半透明の水色 */
+      padding: 1.5rem;
       border-radius: 1rem;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
       margin-bottom: 2rem;
-      color: #fff;
-      text-shadow: 0 0 5px rgba(0,0,0,0.7);
+      display: none;
     }
+
     button {
       display: block;
       margin: 0.5rem auto;
-      padding: 0.5rem 1rem;
+      padding: 0.5rem 1.2rem;
       font-size: 1rem;
       border-radius: 1rem;
       border: none;
       background: #ffd700;
       cursor: pointer;
     }
+
     #thanksImage {
       position: relative;
       margin: 0 auto;
       width: 300px;
       height: 300px;
-      overflow: visible;
+      display: none;
     }
+
     #thanksImg {
       max-width: 100%;
       position: absolute;
@@ -46,41 +54,25 @@
       transform: translate(-50%, -50%);
       animation: none;
     }
-    @keyframes moveRandom {
-      0% {
-        transform: translate(0, 0);
-      }
-      100% {
-        /* ここでJavaScriptで上書きします */
-      }
-    }
+
     @keyframes sparkle {
       0% { filter: brightness(1); }
       100% { filter: brightness(1.7); }
     }
+
     #thanksImg.sparkle {
       animation: sparkle 1s ease-in-out infinite alternate;
     }
-    #thanksMessage {
+
+    #thanksMessage, #finalMessage {
       font-size: 1.5rem;
       margin-top: 1rem;
       opacity: 0;
       transform: translateY(20px);
       transition: opacity 1s ease, transform 1s ease;
     }
-    #thanksMessage.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    #finalMessage {
-      font-size: 1.3rem;
-      color: #333;
-      margin-top: 30px;
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 1s ease, transform 1s ease;
-    }
-    #finalMessage.show {
+
+    #thanksMessage.show, #finalMessage.show {
       opacity: 1;
       transform: translateY(0);
     }
@@ -95,7 +87,7 @@
 
   <button id="showQuestionBtn">ひとくちアンケートにご協力をおねがいします</button>
 
-  <div id="thanksImage" style="display:none;">
+  <div id="thanksImage">
     <img id="thanksImg" src="https://raw.githubusercontent.com/minami00901/bento-ar/main/%E3%81%8A%E3%81%84%E3%81%97%E3%81%84%E3%81%A8%E3%83%87%E3%82%B8%E3%82%BF%E3%83%AB%E3%81%A7%E7%B9%8B%E3%81%8C%E3%82%8C%EF%BC%81.png" alt="ありがとう画像" />
     <div id="thanksMessage">「おいしい」とデジタルでつながれ！^^</div>
   </div>
@@ -128,8 +120,6 @@
     const thanksMessage = document.getElementById("thanksMessage");
     const finalMessage = document.getElementById("finalMessage");
 
-    finalMessage.style.opacity = 0;
-
     function getRandomQuestionIndex() {
       let idx;
       do {
@@ -155,66 +145,64 @@
         optionsDiv.appendChild(btn);
       });
 
+      questionBox.style.display = "block";
       thanksImageDiv.style.display = "none";
       finalMessage.classList.remove("show");
-      finalMessage.style.opacity = 0;
     }
 
     function randomMoveDistance() {
-      // ランダムに画面内の移動距離（px）を決定（±100pxくらい）
       return {
-        x: (Math.random() * 200 - 100), // -100 〜 +100 px
-        y: (Math.random() * 200 - 100)
+        x: Math.random() * 200 - 100,
+        y: Math.random() * 200 - 100
       };
     }
 
     function startThanksAnimation() {
-      // 質問を隠す
       questionBox.style.display = "none";
       showQuestionBtn.style.display = "none";
 
       thanksImageDiv.style.display = "block";
-      thanksMessage.style.opacity = 0;
       thanksMessage.classList.remove("show");
+      finalMessage.classList.remove("show");
 
       const dist = randomMoveDistance();
 
-      // 初期位置リセット
       thanksImg.style.transition = "none";
       thanksImg.style.transform = "translate(0, 0)";
       thanksImg.classList.remove("sparkle");
 
-      // 動きを開始（translateX,Y を使って2秒かけてランダム移動）
-      // その後真ん中に戻す
-      thanksImg.style.transition = "transform 2s ease";
-      thanksImg.style.transform = `translate(${dist.x}px, ${dist.y}px)`;
-
       setTimeout(() => {
-        thanksImg.style.transition = "transform 1s ease";
-        thanksImg.style.transform = "translate(0, 0)";
-      }, 2000);
+        thanksImg.style.transition = "transform 2s ease";
+        thanksImg.style.transform = `translate(${dist.x}px, ${dist.y}px)`;
 
-      // 3秒後にキラキラアニメーション開始＆メッセージ表示
+        setTimeout(() => {
+          thanksImg.style.transition = "transform 1s ease";
+          thanksImg.style.transform = "translate(0, 0)";
+        }, 2000);
+      }, 100);
+
       setTimeout(() => {
         thanksImg.classList.add("sparkle");
         thanksMessage.classList.add("show");
 
-        // さらに3秒後に最終メッセージ表示
         setTimeout(() => {
           finalMessage.classList.add("show");
-        }, 3000);
 
+          // 🎉 クラッカー風演出
+          confetti({
+            particleCount: 120,
+            spread: 100,
+            origin: { y: 0.6 },
+            colors: ['#fce18a', '#ff726d', '#b48def', '#f4306d'],
+          });
+
+        }, 3000);
       }, 3000);
     }
 
     showQuestionBtn.addEventListener("click", () => {
-      questionBox.style.display = "block";
       showQuestion();
     });
-
-    // 最初にボタンだけ表示して質問は非表示にしておく
-    questionBox.style.display = "none";
-    finalMessage.style.opacity = 0;
   </script>
 
 </body>
