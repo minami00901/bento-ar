@@ -4,32 +4,33 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>お弁当アンケートAR</title>
+
+  <!-- クラッカーライブラリ -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
   <style>
     body {
-      background-image: url("https://raw.githubusercontent.com/minami00901/bento-ar/main/%E3%83%86%E3%82%B9%E3%83%88.jpg");
-      background-size: cover;
-      background-position: center;
+      margin: 0;
       font-family: sans-serif;
       text-align: center;
+      background: url('https://raw.githubusercontent.com/minami00901/bento-ar/main/%E3%83%86%E3%82%B9%E3%83%88.jpg') no-repeat center center fixed;
+      background-size: cover;
       padding: 2rem;
-      margin: 0;
     }
 
     #questionBox {
       background: rgba(166, 208, 247, 0.8); /* 半透明の水色 */
-      padding: 1rem;
+      padding: 1.5rem;
       border-radius: 1rem;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
       margin-bottom: 2rem;
-      max-width: 500px;
-      margin-left: auto;
-      margin-right: auto;
+      display: none;
     }
 
     button {
       display: block;
       margin: 0.5rem auto;
-      padding: 0.5rem 1rem;
+      padding: 0.5rem 1.2rem;
       font-size: 1rem;
       border-radius: 1rem;
       border: none;
@@ -42,7 +43,7 @@
       margin: 0 auto;
       width: 300px;
       height: 300px;
-      overflow: visible;
+      display: none;
     }
 
     #thanksImg {
@@ -63,59 +64,17 @@
       animation: sparkle 1s ease-in-out infinite alternate;
     }
 
-    #thanksMessage {
-      font-size: 2rem;
-      font-weight: bold;
+    #thanksMessage, #finalMessage {
+      font-size: 1.5rem;
       margin-top: 1rem;
       opacity: 0;
       transform: translateY(20px);
       transition: opacity 1s ease, transform 1s ease;
-      white-space: nowrap;
-      color: #fff;
-      text-shadow: 1px 1px 3px #000;
     }
 
-    #thanksMessage.show {
+    #thanksMessage.show, #finalMessage.show {
       opacity: 1;
       transform: translateY(0);
-    }
-
-    #finalMessage {
-      font-size: 1.3rem;
-      color: #fff;
-      margin-top: 30px;
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 1s ease, transform 1s ease;
-      text-shadow: 1px 1px 2px #000;
-    }
-
-    #finalMessage.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .confetti {
-      position: fixed;
-      width: 10px;
-      height: 10px;
-      background-color: gold;
-      top: 0;
-      left: 50%;
-      animation: confettiFall 3s linear forwards;
-      opacity: 0.9;
-      border-radius: 50%;
-    }
-
-    @keyframes confettiFall {
-      0% {
-        transform: translateX(0) translateY(0);
-        opacity: 1;
-      }
-      100% {
-        transform: translateX(calc(-200px + 400px * random())) translateY(100vh);
-        opacity: 0;
-      }
     }
   </style>
 </head>
@@ -128,7 +87,7 @@
 
   <button id="showQuestionBtn">ひとくちアンケートにご協力をおねがいします</button>
 
-  <div id="thanksImage" style="display:none;">
+  <div id="thanksImage">
     <img id="thanksImg" src="https://raw.githubusercontent.com/minami00901/bento-ar/main/%E3%81%8A%E3%81%84%E3%81%97%E3%81%84%E3%81%A8%E3%83%87%E3%82%B8%E3%82%BF%E3%83%AB%E3%81%A7%E7%B9%8B%E3%81%8C%E3%82%8C%EF%BC%81.png" alt="ありがとう画像" />
     <div id="thanksMessage">「おいしい」とデジタルでつながれ！^^</div>
   </div>
@@ -175,6 +134,7 @@
       const q = questions[idx];
 
       questionBox.querySelector("h2").textContent = q.text;
+
       optionsDiv.innerHTML = "";
       q.options.forEach(opt => {
         const btn = document.createElement("button");
@@ -185,14 +145,15 @@
         optionsDiv.appendChild(btn);
       });
 
+      questionBox.style.display = "block";
       thanksImageDiv.style.display = "none";
       finalMessage.classList.remove("show");
     }
 
     function randomMoveDistance() {
       return {
-        x: (Math.random() * 200 - 100),
-        y: (Math.random() * 200 - 100)
+        x: Math.random() * 200 - 100,
+        y: Math.random() * 200 - 100
       };
     }
 
@@ -201,8 +162,8 @@
       showQuestionBtn.style.display = "none";
 
       thanksImageDiv.style.display = "block";
-      thanksMessage.style.opacity = 0;
       thanksMessage.classList.remove("show");
+      finalMessage.classList.remove("show");
 
       const dist = randomMoveDistance();
 
@@ -210,51 +171,38 @@
       thanksImg.style.transform = "translate(0, 0)";
       thanksImg.classList.remove("sparkle");
 
-      thanksImg.style.transition = "transform 2s ease";
-      thanksImg.style.transform = `translate(${dist.x}px, ${dist.y}px)`;
-
       setTimeout(() => {
-        thanksImg.style.transition = "transform 1s ease";
-        thanksImg.style.transform = "translate(0, 0)";
-      }, 2000);
+        thanksImg.style.transition = "transform 2s ease";
+        thanksImg.style.transform = `translate(${dist.x}px, ${dist.y}px)`;
+
+        setTimeout(() => {
+          thanksImg.style.transition = "transform 1s ease";
+          thanksImg.style.transform = "translate(0, 0)";
+        }, 2000);
+      }, 100);
 
       setTimeout(() => {
         thanksImg.classList.add("sparkle");
         thanksMessage.classList.add("show");
 
-        // クラッカー演出
-        launchConfetti();
-
         setTimeout(() => {
           finalMessage.classList.add("show");
-        }, 3000);
 
+          // 🎉 クラッカー風演出
+          confetti({
+            particleCount: 120,
+            spread: 100,
+            origin: { y: 0.6 },
+            colors: ['#fce18a', '#ff726d', '#b48def', '#f4306d'],
+          });
+
+        }, 3000);
       }, 3000);
     }
 
-    function launchConfetti() {
-      for (let i = 0; i < 30; i++) {
-        const confetti = document.createElement("div");
-        confetti.className = "confetti";
-        confetti.style.left = `${Math.random() * 100}%`;
-        confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 100%, 70%)`;
-        confetti.style.animationDuration = `${2 + Math.random()}s`;
-        confetti.style.transform = `translateX(${Math.random() * 200 - 100}px)`;
-        document.body.appendChild(confetti);
-        setTimeout(() => {
-          confetti.remove();
-        }, 4000);
-      }
-    }
-
     showQuestionBtn.addEventListener("click", () => {
-      questionBox.style.display = "block";
       showQuestion();
     });
-
-    // 初期状態
-    questionBox.style.display = "none";
-    finalMessage.style.opacity = 0;
   </script>
 
 </body>
