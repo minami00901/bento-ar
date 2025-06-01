@@ -2,109 +2,102 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>お弁当アンケート</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>お弁当アンケートAR</title>
   <style>
     body {
+      background: #fff;
       font-family: sans-serif;
       text-align: center;
-      background: url('https://raw.githubusercontent.com/minami00901/bento-ar/main/%E3%83%86%E3%82%B9%E3%83%88.jpg') no-repeat center center fixed;
-      background-size: cover;
-      margin: 0;
       padding: 2rem;
     }
-
-    .question-box {
-      margin-top: 2rem;
+    #questionBox {
+      background: #a6d0f7;
       padding: 1rem;
       border-radius: 1rem;
-      background: #b3e5fc;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
+      margin-bottom: 2rem;
     }
-
-    .options button {
+    button {
       display: block;
       margin: 0.5rem auto;
       padding: 0.5rem 1rem;
       font-size: 1rem;
-      background: #ffd700;
-      border: none;
       border-radius: 1rem;
+      border: none;
+      background: #ffd700;
       cursor: pointer;
     }
-
-    .thanks-container {
-      margin-top: 2rem;
+    #thanksImage {
       position: relative;
-      height: 300px;
-    }
-
-    .thanks-img {
+      margin: 0 auto;
       width: 300px;
-      position: absolute;
-      animation: moveRandom 2s ease-in-out forwards;
+      height: 300px;
+      overflow: visible;
     }
-
+    #thanksImg {
+      max-width: 100%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: none;
+    }
     @keyframes moveRandom {
       0% {
-        top: 0;
-        left: 0;
-        transform: rotate(0deg);
+        transform: translate(0, 0);
       }
       100% {
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%) rotate(360deg);
+        /* ここでJavaScriptで上書きします */
       }
     }
-
-    .sparkle {
-      position: absolute;
-      width: 100px;
-      height: 100px;
-      top: 10%;
-      left: 50%;
-      transform: translateX(-50%);
-      background: url('https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif') no-repeat center center;
-      background-size: contain;
-      pointer-events: none;
+    @keyframes sparkle {
+      0% { filter: brightness(1); }
+      100% { filter: brightness(1.7); }
     }
-
-    .final-message, .connect-message {
-      display: none;
+    #thanksImg.sparkle {
+      animation: sparkle 1s ease-in-out infinite alternate;
+    }
+    #thanksMessage {
       font-size: 1.5rem;
-      color: #333;
       margin-top: 1rem;
-      animation: fadeInUp 1s ease forwards;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 1s ease, transform 1s ease;
     }
-
-    @keyframes fadeInUp {
-      0% {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    #thanksMessage.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    #finalMessage {
+      font-size: 1.3rem;
+      color: #333;
+      margin-top: 30px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 1s ease, transform 1s ease;
+    }
+    #finalMessage.show {
+      opacity: 1;
+      transform: translateY(0);
     }
   </style>
 </head>
 <body>
-  <h1>お弁当はいかがでしたか</h1>
-  <button onclick="showRandomQuestion()">ひとくちアンケートにご協力をお願いします</button>
 
-  <div class="question-box" id="questionBox" style="display:none;"></div>
-
-  <div class="thanks-container" id="thanksContainer" style="display:none;">
-    <img id="thanksImg" class="thanks-img" src="" alt="ありがとう画像" />
-    <div class="sparkle" id="sparkle" style="display:none;"></div>
-    <div class="connect-message" id="connectMessage">「おいしい」とデジタルでつながれ！^^</div>
-    <div class="final-message" id="finalMessage">ありがとうございます！後半戦もがんばってください</div>
+  <div id="questionBox">
+    <h2>質問がここに出ます</h2>
+    <div id="options"></div>
   </div>
+
+  <button id="showQuestionBtn">ひとくちアンケートにご協力をおねがいします</button>
+
+  <div id="thanksImage" style="display:none;">
+    <img id="thanksImg" src="https://raw.githubusercontent.com/minami00901/bento-ar/main/%E3%81%8A%E3%81%84%E3%81%97%E3%81%84%E3%81%A8%E3%83%87%E3%82%B8%E3%82%BF%E3%83%AB%E3%81%A7%E7%B9%8B%E3%81%8C%E3%82%8C%EF%BC%81.png" alt="ありがとう画像" />
+    <div id="thanksMessage">「おいしい」とデジタルでつながれ！^^b</div>
+  </div>
+
+  <div id="finalMessage">ありがとうございます！後半もがんばってください</div>
 
   <script>
     const questions = [
@@ -118,50 +111,108 @@
       },
       {
         text: "このお弁当、どんな人に勧めたいですか？",
-        options: ["① 午後イチ会議で眠そうなあの人へ", "② これから発表！どきどきしているあの人へ", "③ 自分（また食べたい）"]
+        options: ["① 午後イチ会議で眠そうなあの人へ", "② これから発表！どきどきのあの人へ", "③ 自分（また食べたい）"]
       }
     ];
 
-    const imageUrl = "https://raw.githubusercontent.com/minami00901/bento-ar/main/%E3%81%8A%E3%81%84%E3%81%97%E3%81%84%E3%81%A8%E3%83%87%E3%82%B8%E3%82%BF%E3%83%AB%E3%81%A7%E7%B9%8B%E3%81%8C%E3%82%8C%EF%BC%81.png";
+    let lastQuestionIndex = -1;
 
-    function showRandomQuestion() {
-      const q = questions[Math.floor(Math.random() * questions.length)];
-      const box = document.getElementById("questionBox");
-      box.innerHTML = `<h2>${q.text}</h2><div class="options">${q.options.map(opt => `<button onclick="showThanks()">${opt}</button>`).join("")}</div>`;
-      box.style.display = "block";
-      document.getElementById("thanksContainer").style.display = "none";
-      document.getElementById("connectMessage").style.display = "none";
-      document.getElementById("finalMessage").style.display = "none";
+    const questionBox = document.getElementById("questionBox");
+    const optionsDiv = document.getElementById("options");
+    const showQuestionBtn = document.getElementById("showQuestionBtn");
+    const thanksImageDiv = document.getElementById("thanksImage");
+    const thanksImg = document.getElementById("thanksImg");
+    const thanksMessage = document.getElementById("thanksMessage");
+    const finalMessage = document.getElementById("finalMessage");
+
+    finalMessage.style.opacity = 0;
+
+    function getRandomQuestionIndex() {
+      let idx;
+      do {
+        idx = Math.floor(Math.random() * questions.length);
+      } while (idx === lastQuestionIndex);
+      lastQuestionIndex = idx;
+      return idx;
     }
 
-    function showThanks() {
-      const imgTag = document.getElementById("thanksImg");
-      const container = document.getElementById("thanksContainer");
-      const sparkle = document.getElementById("sparkle");
+    function showQuestion() {
+      const idx = getRandomQuestionIndex();
+      const q = questions[idx];
 
-      imgTag.src = imageUrl;
-      container.style.display = "block";
+      questionBox.querySelector("h2").textContent = q.text;
 
-      // リスタート用に class を削除・再追加
-      imgTag.classList.remove("thanks-img");
-      void imgTag.offsetWidth; // reflow
-      imgTag.classList.add("thanks-img");
+      optionsDiv.innerHTML = "";
+      q.options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.textContent = opt;
+        btn.onclick = () => {
+          startThanksAnimation();
+        };
+        optionsDiv.appendChild(btn);
+      });
 
-      // キラキラを表示
+      thanksImageDiv.style.display = "none";
+      finalMessage.classList.remove("show");
+      finalMessage.style.opacity = 0;
+    }
+
+    function randomMoveDistance() {
+      // ランダムに画面内の移動距離（px）を決定（±100pxくらい）
+      return {
+        x: (Math.random() * 200 - 100), // -100 〜 +100 px
+        y: (Math.random() * 200 - 100)
+      };
+    }
+
+    function startThanksAnimation() {
+      // 質問を隠す
+      questionBox.style.display = "none";
+      showQuestionBtn.style.display = "none";
+
+      thanksImageDiv.style.display = "block";
+      thanksMessage.style.opacity = 0;
+      thanksMessage.classList.remove("show");
+
+      const dist = randomMoveDistance();
+
+      // 初期位置リセット
+      thanksImg.style.transition = "none";
+      thanksImg.style.transform = "translate(0, 0)";
+      thanksImg.classList.remove("sparkle");
+
+      // 動きを開始（translateX,Y を使って2秒かけてランダム移動）
+      // その後真ん中に戻す
+      thanksImg.style.transition = "transform 2s ease";
+      thanksImg.style.transform = `translate(${dist.x}px, ${dist.y}px)`;
+
       setTimeout(() => {
-        sparkle.style.display = "block";
+        thanksImg.style.transition = "transform 1s ease";
+        thanksImg.style.transform = "translate(0, 0)";
       }, 2000);
 
-      // 「おいしいとデジタルでつながれ！」を表示
+      // 3秒後にキラキラアニメーション開始＆メッセージ表示
       setTimeout(() => {
-        document.getElementById("connectMessage").style.display = "block";
-      }, 2500);
+        thanksImg.classList.add("sparkle");
+        thanksMessage.classList.add("show");
 
-      // 最後のメッセージ
-      setTimeout(() => {
-        document.getElementById("finalMessage").style.display = "block";
-      }, 4000);
+        // さらに3秒後に最終メッセージ表示
+        setTimeout(() => {
+          finalMessage.classList.add("show");
+        }, 3000);
+
+      }, 3000);
     }
+
+    showQuestionBtn.addEventListener("click", () => {
+      questionBox.style.display = "block";
+      showQuestion();
+    });
+
+    // 最初にボタンだけ表示して質問は非表示にしておく
+    questionBox.style.display = "none";
+    finalMessage.style.opacity = 0;
   </script>
+
 </body>
 </html>
