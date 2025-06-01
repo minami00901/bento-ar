@@ -94,7 +94,7 @@
 
   <div id="thanksImage" style="display:none;">
     <img id="thanksImg" src="https://raw.githubusercontent.com/minami00901/bento-ar/main/%E3%81%8A%E3%81%84%E3%81%97%E3%81%84%E3%81%A8%E3%83%87%E3%82%B8%E3%82%BF%E3%83%AB%E3%81%A7%E7%B9%8B%E3%81%8C%E3%82%8C%EF%BC%81.png" alt="ありがとう画像" />
-    <div id="thanksMessage">「おいしい」とデジタルでつながれ！^^b</div>
+    <div id="thanksMessage">「おいしい」とデジタルでつながれ！^^</div>
   </div>
 
   <div id="finalMessage">ありがとうございます！後半もがんばってください</div>
@@ -103,7 +103,7 @@
     const questions = [
       {
         text: "今日のお弁当はいかがですか？",
-        options: ["① とても美味しそう", "② 普通（空腹は満たされそう）", "③ ちょっと惜しい（あと一歩）"]
+        options: ["① とても美味しそう", "② 普通（空腹は満たされました）", "③ ちょっと惜しい（あと一歩）"]
       },
       {
         text: "またこのお弁当を食べたいですか？",
@@ -204,24 +204,15 @@
       }, 3000);
     }
 
-  showQuestionBtn.addEventListener("click", () => {
-  questionBox.style.display = "block";
-  showQuestion();
-});
+    showQuestionBtn.addEventListener("click", () => {
+      questionBox.style.display = "block";
+      showQuestion();
+    });
 
-// 最初にボタンだけ表示して質問は非表示にしておく
-questionBox.style.display = "none";
-finalMessage.style.opacity = 0;
-
-// ページ読み込み後にローディングを非表示にする
-window.addEventListener('load', () => {
-  const loading = document.getElementById('loading') || document.querySelector('.loading');
-  if (loading) {
-    loading.style.display = 'none';
-  }
-});
-  
+    // 最初にボタンだけ表示して質問は非表示にしておく
+    questionBox.style.display = "none";
+    finalMessage.style.opacity = 0;
   </script>
-　
+
 </body>
 </html>
