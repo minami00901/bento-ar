@@ -4,8 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>お弁当アンケートAR</title>
-
-  <!-- クラッカーライブラリ -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <style>
@@ -38,8 +36,21 @@
       cursor: pointer;
     }
 
+    /* 🌟 Attentionアニメーション */
+    @keyframes pulse {
+      0%, 100% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      50% {
+        transform: translateY(-5px);
+        opacity: 0.7;
+      }
+    }
+
     #showQuestionBtn {
-      background-color: #d8b0f9; /* 薄い紫 */
+      background-color: #d8b0f9;
+      animation: pulse 2s infinite;
     }
 
     #thanksImage {
@@ -69,24 +80,6 @@
     #thanksImg.sparkle {
       animation: sparkle 1s ease-in-out infinite alternate;
     }
-
-    #thanksMessage,
-    #finalMessage {
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: red;
-      margin-top: 0.5rem;
-      margin-bottom: 1.5rem;
-      opacity: 0;
-      transform: translateY(5px);
-      transition: opacity 1s ease, transform 1s ease;
-    }
-
-    #thanksMessage.show,
-    #finalMessage.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
   </style>
 </head>
 <body>
@@ -104,10 +97,7 @@
       src="https://raw.githubusercontent.com/minami00901/bento-ar/main/%E9%80%8F%E9%81%8E%E3%81%8A%E3%81%84%E3%81%97%E3%81%84%E3%81%A8%E3%83%87%E3%82%B8%E3%82%BF%E3%83%AB%E3%81%A7%E7%B9%8B%E3%81%8C%E3%82%8C_-removebg-preview.png"
       alt="ありがとう画像"
     />
-    <div id="thanksMessage">「おいしい」とデジタルでつながれ！^^</div>
   </div>
-
-  <div id="finalMessage">ありがとうございます！後半もがんばってください</div>
 
   <script>
     const questions = [
@@ -132,8 +122,6 @@
     const showQuestionBtn = document.getElementById("showQuestionBtn");
     const thanksImageDiv = document.getElementById("thanksImage");
     const thanksImg = document.getElementById("thanksImg");
-    const thanksMessage = document.getElementById("thanksMessage");
-    const finalMessage = document.getElementById("finalMessage");
 
     function getRandomQuestionIndex() {
       let idx;
@@ -162,7 +150,6 @@
 
       questionBox.style.display = "block";
       thanksImageDiv.style.display = "none";
-      finalMessage.classList.remove("show");
     }
 
     function randomMoveDistance() {
@@ -176,9 +163,10 @@
       questionBox.style.display = "none";
       showQuestionBtn.style.display = "none";
 
+      // 🔄 背景変更
+      document.body.style.backgroundImage = "url('https://raw.githubusercontent.com/minami00901/bento-ar/main/1.png')";
+
       thanksImageDiv.style.display = "block";
-      thanksMessage.classList.remove("show");
-      finalMessage.classList.remove("show");
 
       const dist = randomMoveDistance();
 
@@ -198,20 +186,12 @@
 
       setTimeout(() => {
         thanksImg.classList.add("sparkle");
-        thanksMessage.classList.add("show");
-
-        setTimeout(() => {
-          finalMessage.classList.add("show");
-
-          // 🎉 クラッカー演出
-          confetti({
-            particleCount: 120,
-            spread: 100,
-            origin: { y: 0.6 },
-            colors: ['#fce18a', '#ff726d', '#b48def', '#f4306d'],
-          });
-
-        }, 3000);
+        confetti({
+          particleCount: 120,
+          spread: 100,
+          origin: { y: 0.6 },
+          colors: ['#fce18a', '#ff726d', '#b48def', '#f4306d'],
+        });
       }, 3000);
     }
 
