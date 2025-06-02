@@ -39,7 +39,7 @@
     }
 
     #showQuestionBtn {
-      background-color: #d8b0f9; /* 薄い紫 */
+      background-color: #d8b0f9;
       animation: pulse 2s infinite;
     }
 
@@ -49,32 +49,22 @@
       100% { transform: scale(1); }
     }
 
-    #thanksImage {
-      position: relative;
-      margin: 0 auto;
-      width: 100%;
-      height: 200px;
+    #centerBackground {
       display: none;
-      margin-top: 1rem;
+      margin: 2rem auto 0;
+      width: 50vw;
+      max-width: 400px;
     }
 
-    #thanksImg {
-      max-width: 30%;
-      max-height: 100%;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      animation: none;
+    #centerBackground img {
+      width: 100%;
+      height: auto;
+      animation: sparkle 1s ease-in-out infinite alternate;
     }
 
     @keyframes sparkle {
       0% { filter: brightness(1); }
-      100% { filter: brightness(1.7); }
-    }
-
-    #thanksImg.sparkle {
-      animation: sparkle 1s ease-in-out infinite alternate;
+      100% { filter: brightness(1.6); }
     }
   </style>
 </head>
@@ -87,12 +77,9 @@
 
   <button id="showQuestionBtn">ひとくちアンケートにご協力をおねがいします</button>
 
-  <div id="thanksImage">
-    <img
-      id="thanksImg"
-      src="https://raw.githubusercontent.com/minami00901/bento-ar/main/%E9%80%8F%E9%81%8E%E3%81%8A%E3%81%84%E3%81%97%E3%81%84%E3%81%A8%E3%83%87%E3%82%B8%E3%82%BF%E3%83%AB%E3%81%A7%E7%B9%8B%E3%81%8C%E3%82%8C_-removebg-preview.png"
-      alt="ありがとう画像"
-    />
+  <!-- 中央に表示する半分サイズの背景 -->
+  <div id="centerBackground">
+    <img src="https://raw.githubusercontent.com/minami00901/bento-ar/main/1.png" alt="背景画像">
   </div>
 
   <script>
@@ -116,8 +103,7 @@
     const questionBox = document.getElementById("questionBox");
     const optionsDiv = document.getElementById("options");
     const showQuestionBtn = document.getElementById("showQuestionBtn");
-    const thanksImageDiv = document.getElementById("thanksImage");
-    const thanksImg = document.getElementById("thanksImg");
+    const centerBackground = document.getElementById("centerBackground");
 
     function getRandomQuestionIndex() {
       let idx;
@@ -139,60 +125,31 @@
         const btn = document.createElement("button");
         btn.textContent = opt;
         btn.onclick = () => {
-          startThanksAnimation();
+          startAnimation();
         };
         optionsDiv.appendChild(btn);
       });
 
       questionBox.style.display = "block";
-      thanksImageDiv.style.display = "none";
+      centerBackground.style.display = "none";
     }
 
-    function randomMoveDistance() {
-      return {
-        x: Math.random() * 200 - 100,
-        y: Math.random() * 200 - 100
-      };
-    }
-
-    function startThanksAnimation() {
+    function startAnimation() {
       questionBox.style.display = "none";
       showQuestionBtn.style.display = "none";
 
-      // 背景切り替え
-      document.body.style.background = "url('https://raw.githubusercontent.com/minami00901/bento-ar/main/1.png') no-repeat center center fixed";
-      document.body.style.backgroundSize = "cover";
+      // 中央背景を表示
+      centerBackground.style.display = "block";
 
-      thanksImageDiv.style.display = "block";
-
-      const dist = randomMoveDistance();
-
-      thanksImg.style.transition = "none";
-      thanksImg.style.transform = "translate(0, 0)";
-      thanksImg.classList.remove("sparkle");
-
+      // 🎉 クラッカー演出
       setTimeout(() => {
-        thanksImg.style.transition = "transform 2s ease";
-        thanksImg.style.transform = `translate(${dist.x}px, ${dist.y}px)`;
-
-        setTimeout(() => {
-          thanksImg.style.transition = "transform 1s ease";
-          thanksImg.style.transform = "translate(0, 0)";
-        }, 2000);
-      }, 100);
-
-      setTimeout(() => {
-        thanksImg.classList.add("sparkle");
-
-        // 🎉 クラッカー演出
         confetti({
           particleCount: 120,
           spread: 100,
           origin: { y: 0.6 },
           colors: ['#fce18a', '#ff726d', '#b48def', '#f4306d'],
         });
-
-      }, 3000);
+      }, 1000);
     }
 
     showQuestionBtn.addEventListener("click", () => {
