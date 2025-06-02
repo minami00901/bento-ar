@@ -16,10 +16,11 @@
       background: url('https://raw.githubusercontent.com/minami00901/bento-ar/main/%E3%83%86%E3%82%B9%E3%83%88.jpg') no-repeat center center fixed;
       background-size: cover;
       padding: 2rem;
+      transition: background 1s ease;
     }
 
     #questionBox {
-      background: rgba(166, 208, 247, 0.8);
+      background: rgba(166, 208, 247, 0.85);
       padding: 1.5rem;
       border-radius: 1rem;
       box-shadow: 0 0 15px rgba(0,0,0,0.2);
@@ -49,22 +50,17 @@
       100% { transform: scale(1); }
     }
 
-    #centerBackground {
+    #mainImage {
       display: none;
-      margin: 2rem auto 0;
       width: 50vw;
       max-width: 400px;
-    }
-
-    #centerBackground img {
-      width: 100%;
-      height: auto;
+      margin: 2rem auto 0;
       animation: sparkle 1s ease-in-out infinite alternate;
     }
 
     @keyframes sparkle {
-      0% { filter: brightness(1); }
-      100% { filter: brightness(1.6); }
+      0% { filter: brightness(1); transform: scale(1); }
+      100% { filter: brightness(1.5); transform: scale(1.05); }
     }
   </style>
 </head>
@@ -77,10 +73,8 @@
 
   <button id="showQuestionBtn">ひとくちアンケートにご協力をおねがいします</button>
 
-  <!-- 中央に表示する半分サイズの背景 -->
-  <div id="centerBackground">
-    <img src="https://raw.githubusercontent.com/minami00901/bento-ar/main/1.png" alt="背景画像">
-  </div>
+  <!-- 質問回答後に中央に表示される画像 -->
+  <img id="mainImage" src="https://raw.githubusercontent.com/minami00901/bento-ar/main/1.png" alt="演出画像">
 
   <script>
     const questions = [
@@ -100,10 +94,11 @@
 
     let lastQuestionIndex = -1;
 
+    const body = document.body;
     const questionBox = document.getElementById("questionBox");
     const optionsDiv = document.getElementById("options");
     const showQuestionBtn = document.getElementById("showQuestionBtn");
-    const centerBackground = document.getElementById("centerBackground");
+    const mainImage = document.getElementById("mainImage");
 
     function getRandomQuestionIndex() {
       let idx;
@@ -131,30 +126,34 @@
       });
 
       questionBox.style.display = "block";
-      centerBackground.style.display = "none";
+      mainImage.style.display = "none";
+
+      // 背景は元のまま
+      body.style.background = "url('https://raw.githubusercontent.com/minami00901/bento-ar/main/%E3%83%86%E3%82%B9%E3%83%88.jpg') no-repeat center center fixed";
+      body.style.backgroundSize = "cover";
     }
 
     function startAnimation() {
       questionBox.style.display = "none";
       showQuestionBtn.style.display = "none";
 
-      // 中央背景を表示
-      centerBackground.style.display = "block";
+      // 背景を白に変える
+      body.style.background = "#fff";
 
-      // 🎉 クラッカー演出
+      mainImage.style.display = "block";
+
+      // 🎉 クラッカー
       setTimeout(() => {
         confetti({
-          particleCount: 120,
-          spread: 100,
+          particleCount: 150,
+          spread: 90,
           origin: { y: 0.6 },
           colors: ['#fce18a', '#ff726d', '#b48def', '#f4306d'],
         });
-      }, 1000);
+      }, 500);
     }
 
-    showQuestionBtn.addEventListener("click", () => {
-      showQuestion();
-    });
+    showQuestionBtn.addEventListener("click", showQuestion);
   </script>
 
 </body>
