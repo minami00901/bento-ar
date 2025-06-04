@@ -4,10 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>お弁当アンケートAR</title>
-
-  <!-- クラッカーライブラリ -->
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
   <style>
     body {
       margin: 0;
@@ -18,7 +15,6 @@
       padding: 2rem;
       transition: background 1s ease;
     }
-
     #questionBox {
       background: rgba(166, 208, 247, 0.85);
       padding: 1.5rem;
@@ -27,7 +23,6 @@
       margin-bottom: 2rem;
       display: none;
     }
-
     button {
       display: block;
       margin: 0.5rem auto;
@@ -38,28 +33,20 @@
       background: #ffd700;
       cursor: pointer;
     }
-
     #showQuestionBtn {
       background-color: #d8b0f9;
       animation: pulse 2s infinite;
     }
-
     @keyframes pulse {
       0% { transform: scale(1); }
       50% { transform: scale(1.1); }
       100% { transform: scale(1); }
     }
-
     #mainImage {
       display: none;
       width: 70vw;
       max-width: 600px;
       margin: 2rem auto 0;
-    }
-
-    @keyframes sparkle {
-      0% { filter: brightness(1); transform: scale(1); }
-      100% { filter: brightness(1.5); transform: scale(1.05); }
     }
   </style>
 </head>
@@ -72,8 +59,7 @@
 
   <button id="showQuestionBtn">ひとくちアンケートにご協力をおねがいします</button>
 
-  <!-- 質問回答後に中央に表示される画像 -->
-  <img id="mainImage" src="https://raw.githubusercontent.com/minami00901/bento-ar/main/1.png" alt="演出画像">
+  <img id="mainImage" src="https://raw.githubusercontent.com/minami00901/bento-ar/main/%E3%81%82%E3%82%8A%E3%81%8C%E3%81%A8%E3%81%86%E3%81%94%E3%81%96%E3%81%84%E3%81%BE%E3%81%99%20(1).png" alt="演出画像">
 
   <script>
     const questions = [
@@ -92,7 +78,6 @@
     ];
 
     let lastQuestionIndex = -1;
-
     const body = document.body;
     const questionBox = document.getElementById("questionBox");
     const optionsDiv = document.getElementById("options");
@@ -111,10 +96,9 @@
     function showQuestion() {
       const idx = getRandomQuestionIndex();
       const q = questions[idx];
-
       questionBox.querySelector("h2").textContent = q.text;
-
       optionsDiv.innerHTML = "";
+
       q.options.forEach(opt => {
         const btn = document.createElement("button");
         btn.textContent = opt;
@@ -127,21 +111,32 @@
       questionBox.style.display = "block";
       mainImage.style.display = "none";
 
-      // 背景は元のまま
+      // 背景リセット
       body.style.background = "url('https://raw.githubusercontent.com/minami00901/bento-ar/main/%E3%83%86%E3%82%B9%E3%83%88.jpg') no-repeat center center fixed";
       body.style.backgroundSize = "cover";
+
+      // ✅ タップ後にボタンを消す
+      showQuestionBtn.style.display = "none";
     }
 
     function startAnimation() {
       questionBox.style.display = "none";
-      showQuestionBtn.style.display = "none";
 
-      // 背景を白に変える
+      // 背景を白に変更
       body.style.background = "#fff";
 
+      // メッセージ表示
+      const message = document.createElement("h2");
+      message.textContent = "「DITAL」で「おいしい」がつながる！";
+      message.style.marginTop = "2rem";
+      message.style.fontSize = "1.5rem";
+      message.style.color = "#333";
+      body.appendChild(message);
+
+      // 画像表示
       mainImage.style.display = "block";
 
-      // 🎉 クラッカー
+      // クラッカー演出
       setTimeout(() => {
         confetti({
           particleCount: 150,
